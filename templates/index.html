@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}NeuroScan{% endblock %}
+{% block content %}
+    <div id="splash-screen">
+        <div class="neuroscan-logo">
+            <span class="animated-text">N</span>
+            <span class="animated-text">e</span>
+            <span class="animated-text">u</span>
+            <span class="animated-text">r</span>
+            <span class="animated-text">o</span>
+            <span class="animated-text">S</span>
+            <span class="animated-text">c</span>
+            <span class="animated-text">a</span>
+            <span class="animated-text">n</span>
+        </div>
+        <div class="scanning-indicator"></div>
+    </div>
+
+    <div class="tech-pattern left"></div>
+    <div class="tech-pattern right"></div>
+
+    <div class="container">
+        <header>
+            <h1 class="main-title">NeuroScan</h1>
+        </header>
+
+        <main id="main-content">
+            <section class="upload-section">
+                <h2>Upload MRI Scan</h2>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept="image/*">
+                    <div class="custom-file-input">
+                        <i class="fas fa-upload"></i> Choose Image
+                    </div>
+                    <span class="file-name">No file chosen</span>
+                </div>
+                <p id="nonMriWarning" class="hidden">⚠️ Error: Non-MRI image detected. Please upload a valid brain MRI scan.</p>
+                <button class="scan-button" id="predictButton" disabled>
+                    <i class="fas fa-rocket"></i> Analyze Scan
+                </button>
+                <div class="image-preview">
+                    <img id="uploadedImage" src="#" alt="Uploaded scan image" class="hidden">
+                    <p>Image Preview</p>
+                </div>
+            </section>
+
+            <section class="results-section hidden" id="resultSection">
+                <h2>Analysis Results</h2>
+                <div class="result-display">
+                    <p class="ensemble-label">General Prediction:</p>
+                    <div class="prediction-text" id="predictionText">
+                        <span id="predictionLabel"></span>
+                        <i class="fas fa-exclamation-triangle danger-icon hidden" id="dangerIcon"></i>
+                    </div>
+                    <p id="disagreementWarning" class="disagreement-message"></p>
+                </div>
+                <div id="correctSection">
+                    <p>Correct Prediction:</p>
+                    <select id="correctLabel">
+                        <option value="No Tumor">No Tumor</option>
+                        <option value="Have Tumor">Have Tumor</option>
+                        <option value="Unknown">Unknown</option>
+                    </select>
+                    <textarea id="correctExplanation" placeholder="Explain why the model failed (optional)" rows="3"></textarea>
+                    <button id="submitCorrection">Submit Correction</button>
+                </div>
+                <div class="model-predictions-list" id="modelPredictions"></div>
+            </section>
+
+            <section class="history-link-section">
+                <a href="/history" class="history-button">
+                    <i class="fas fa-history"></i> View Scan History
+                </a>
+                <a href="/corrections" class="history-button">
+                    <i class="fas fa-edit"></i> View Corrections
+                </a>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const customFileInput = document.querySelector('.custom-file-input');
+        const fileName = document.querySelector('.file-name');
+        const predictButton = document.getElementById('predictButton');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const imagePreview = document.querySelector('.image-preview p');
+        const nonMriWarning = document.getElementById('nonMriWarning');
+        const resultSection = document.getElementById('resultSection');
+        const predictionText = document.getElementById('predictionText');
+        const predictionLabel = document.getElementById('predictionLabel');
+        const dangerIcon = document.getElementById('dangerIcon');
+        const disagreementWarning = document.getElementById('disagreementWarning');
+        const modelPredictions = document.getElementById('modelPredictions');
+        const correctLabel = document.getElementById('correctLabel');
+        const correctExplanation = document.getElementById('correctExplanation');
+        const submitCorrection = document.getElementById('submitCorrection');
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+
+        let currentFilename = '';
+        let correctionResult = null;
+
+        // Drag and drop
+        customFileInput.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            customFileInput.style.backgroundColor = '#1f4068';
+        });
+
+        customFileInput.addEventListener('dragleave', () => {
+            customFileInput.style.backgroundColor = '';
+        });
+
+        customFileInput.addEventListener('drop', (e) => {
+            e.preventDefault();
+            customFileInput.style.backgroundColor = '';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                fileInput.files = e.dataTransfer.files;
+                handleFile(file);
+            } else {
+                alert('Please drop a valid image file.');
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            fileName.textContent = file.name;
+            uploadedImage.src = URL.createObjectURL(file);
+            uploadedImage.classList.remove('hidden');
+            imagePreview.classList.add('hidden');
+            predictButton.disabled = false;
+            nonMriWarning.classList.add('hidden');
+        }
+
+        predictButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please upload an image.');
+                return;
+            }
+
+            predictButton.disabled = true;
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                predictButton.disabled = false;
+                if (data.error) {
+                    if (data.error.includes('Non-MRI')) {
+                        nonMriWarning.classList.remove('hidden');
+                        saveCorrection(data);
+                    } else {
+                        alert(data.error);
+                    }
+                    return;
+                }
+
+                currentFilename = data.filename;
+                correctionResult = data;
+                nonMriWarning.classList.add('hidden');
+                predictionLabel.textContent = `${data.general.label} (${data.general.confidence}%)`;
+                predictionText.className = `prediction-text ${data.general.label === 'Have Tumor' ? 'text-red-500' : 'text-green-500'}`;
+                document.body.className = data.general.label === 'Have Tumor' ? 'tumor' : 'normal';
+                dangerIcon.classList.toggle('hidden', data.general.label !== 'Have Tumor');
+                disagreementWarning.textContent = data.disagreement_warning || '';
+                modelPredictions.innerHTML = Object.entries(data.individual)
+                    .map(([model, result]) => `
+                        <li>
+                            <span>${model}</span>
+                            ${result.label} (${result.confidence}%)
+                            <span class="${result.label === 'Have Tumor' ? 'text-red-500' : 'text-green-500'}">
+                                ${result.label}
+                            </span>
+                        </li>
+                    `).join('');
+                resultSection.classList.remove('hidden');
+            })
+            .catch(error => {
+                predictButton.disabled = false;
+                alert('Error during prediction: ' + error.message);
+            });
+        });
+
+        submitCorrection.addEventListener('click', () => {
+            if (!currentFilename || !correctionResult) {
+                alert('No prediction to correct.');
+                return;
+            }
+            const correctedLabel = correctLabel.value;
+            const originalLabel = correctionResult.general.label;
+            const confidence = parseFloat(correctionResult.general.confidence);
+            const explanation = correctExplanation.value;
+
+            fetch('/correct', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filename: currentFilename,
+                    original_label: originalLabel,
+                    corrected_label: correctedLabel,
+                    confidence: confidence,
+                    explanation: explanation
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(`Correction saved: ${correctedLabel}`);
+                    correctExplanation.value = '';
+                }
+            })
+            .catch(error => {
+                alert('Error saving correction: ' + error.message);
+            });
+        });
+
+        function saveCorrection(data) {
+            if (!data.filename && !currentFilename) return;
+            const filename = data.filename || currentFilename;
+            const correctedLabel = data.error?.includes('Non-MRI') ? 'Unknown' : correctLabel.value;
+            const originalLabel = data.general ? data.general.label : 'Unknown';
+            const confidence = data.general ? parseFloat(data.general.confidence) : 0;
+            const fault = data.fault || data.error || '';
+            const explanation = correctExplanation.value;
+
+            fetch('/correct', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filename: filename,
+                    original_label: originalLabel,
+                    corrected_label: correctedLabel,
+                    confidence: confidence,
+                    fault: fault,
+                    explanation: explanation
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Correction saved');
+                    correctExplanation.value = '';
+                }
+            })
+            .catch(error => {
+                alert('Error saving correction: ' + error.message);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+                mainContent.style.opacity = '1';
+            }, 2000);
+        });
+    </script>
+{% endblock %}

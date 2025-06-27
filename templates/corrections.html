@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corrections - NeuroScan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="history-page">
+    <div class="tech-pattern left"></div>
+    <div class="tech-pattern right"></div>
+
+    <div class="container">
+        <header>
+            <h1 class="main-title">Corrections</h1>
+            <a href="/" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Scan
+            </a>
+        </header>
+
+        <main>
+            {% if corrections %}
+            <div class="history-grid">
+                {% for correction in corrections %}
+                <div class="history-card {{ 'tumor' if correction.corrected_label == 'Have Tumor' else 'normal' }}">
+                        <img src="/uploads/{{ correction.filename }}" 
+                             alt="Scan Image" 
+                             class="history-image"
+                             onerror="this.onerror=null; this.src='/static/css/no-image.png'; this.classList.add('error-image');">
+                    </div>
+                    <div class="history-details">
+                        <p class="history-date">Corrected: {{ correction.timestamp }}</p>
+                        <p class="history-prediction">
+                            <span>Original: {{ correction.original_label }}</span>
+                        </p>
+                        <p class="history-prediction">
+                            <span>Corrected: {{ correction.corrected_label }}</span>
+                            {% if correction.corrected_label == 'Have Tumor' %}
+                            <i class="fas fa-exclamation-triangle danger-icon-small"></i>
+                            {% endif %}
+                        </p>
+                        <p>Confidence: {{ correction.confidence|round(2) }}%</p>
+                        <p>Fault: {{ correction.fault or 'N/A' }}</p>
+                        <p>Explanation: {{ correction.explanation or 'None' }}</p>
+                        <textarea class="explanation-input" data-id="{{ correction.id }}" placeholder="Update explanation">{{ correction.explanation or '' }}</textarea>
+                        <button class="delete-button" onclick="updateExplanation('{{ correction.id }}')">
+                            <i class="fas fa-save"></i> Update Explanation
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-history-message">No corrections available yet.</p>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        function updateExplanation(correctionId) {
+            const textarea = document.querySelector(`textarea[data-id="${correctionId}"]`);
+            const explanation = textarea.value;
+
+            fetch(`/update_explanation/${correctionId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ explanation })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Explanation updated');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                alert('Error updating explanation: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

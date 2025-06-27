@@ -1,0 +1,2324 @@
+/* static/css/style.css */
+
+:root {
+    --bg-dark: #1a1a2e;
+    --card-bg: #16213e;
+    --text-light: #e0e0e0;
+    --accent-blue: #0f3460;
+    --button-hover: #1f4068;
+    --red-danger: #e94560;
+    --green-normal: #69b369;
+    --font-inter: 'Inter', sans-serif;
+    --tech-glow-color: #00e5ff;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.no-history-message {
+    text-align: center;
+    font-size: 1.2em;
+    color: var(--text-light);
+    margin-top: 2em;
+    opacity: 0.7;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.5s ease;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    flex-grow: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure proper stacking context */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Prevent tech patterns from blocking clicks */
+.tech-pattern {
+    position: fixed;
+    top: 0;
+    width: 15%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        rgba(0, 150, 255, 0.05),
+        rgba(0, 150, 255, 0.2),
+        rgba(0, 150, 255, 0.05)
+    );
+    z-index: 0;
+    pointer-events: none;
+}
+
+.tech-pattern.left {
+    left: 0;
+    border-right: 1px solid rgba(var(--tech-glow-color), 0.3);
+    box-shadow: 0 0 30px var(--tech-glow-color), inset 0 0 15px var(--tech-glow-color);
+}
+
+.tech-pattern.right {
+    right: 0;
+    border-left: 1px solid rgba(var(--tech-glow-color), 0.3);
+    box-shadow: 0 0 30px var(--tech-glow-color), inset 0 0 15px var(--tech-glow-color);
+}
+
+/* Subtle animation for tech patterns */
+.tech-pattern::before,
+.tech-pattern::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(var(--tech-glow-color), 0.1);
+    animation: techPulse 4s infinite alternate;
+    pointer-events: none;
+}
+
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 20; /* Ensure header is on top */
+    position: relative;
+}
+
+.main-title {
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 25px;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 15;
+}
+
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 50px);
+    border: 2px solid var(--accent-blue);
+    position: relative;
+    z-index: 14;
+}
+
+.custom-file-input:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-file-input i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.file-name {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    word-break: break-all;
+}
+
+.scan-button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scan-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6);
+    background: linear-gradient(45deg, #00aaff, #0056ff);
+}
+
+.scan-button i {
+    font-size: 1.4em;
+}
+
+.image-preview {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-preview p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+/* Results Section */
+.results-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.results-section h2 {
+    margin-top: 0;
+}
+
+.result-display {
+    margin-bottom: 20px;
+}
+
+.ensemble-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.prediction-text {
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-width: 250px;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.danger-icon {
+    font-size: 1.5em;
+    color: white; /* Icon itself is white, background color changes */
+}
+
+/* State-based UI colors */
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 20; /* Ensure header is on top */
+    position: relative;
+}
+
+.main-title {
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 25px;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 15;
+}
+
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 50px);
+    border: 2px solid var(--accent-blue);
+    position: relative;
+    z-index: 14;
+}
+
+.custom-file-input:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-file-input i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.file-name {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    word-break: break-all;
+}
+
+.scan-button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scan-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6);
+    background: linear-gradient(45deg, #00aaff, #0056ff);
+}
+
+.scan-button i {
+    font-size: 1.4em;
+}
+
+.image-preview {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-preview p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+/* Results Section */
+.results-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.results-section h2 {
+    margin-top: 0;
+}
+
+.result-display {
+    margin-bottom: 20px;
+}
+
+.ensemble-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.prediction-text {
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-width: 250px;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.danger-icon {
+    font-size: 1.5em;
+    color: white; /* Icon itself is white, background color changes */
+}
+
+/* State-based UI colors */
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 20; /* Ensure header is on top */
+    position: relative;
+}
+
+.main-title {
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 25px;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 15;
+}
+
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 50px);
+    border: 2px solid var(--accent-blue);
+    position: relative;
+    z-index: 14;
+}
+
+.custom-file-input:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-file-input i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.file-name {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    word-break: break-all;
+}
+
+.scan-button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scan-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6);
+    background: linear-gradient(45deg, #00aaff, #0056ff);
+}
+
+.scan-button i {
+    font-size: 1.4em;
+}
+
+.image-preview {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-preview p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+/* Results Section */
+.results-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.results-section h2 {
+    margin-top: 0;
+}
+
+.result-display {
+    margin-bottom: 20px;
+}
+
+.ensemble-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.prediction-text {
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-width: 250px;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.danger-icon {
+    font-size: 1.5em;
+    color: white; /* Icon itself is white, background color changes */
+}
+
+/* State-based UI colors */
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 20; /* Ensure header is on top */
+    position: relative;
+}
+
+.main-title {
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 25px;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 15;
+}
+
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 50px);
+    border: 2px solid var(--accent-blue);
+    position: relative;
+    z-index: 14;
+}
+
+.custom-file-input:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-file-input i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.file-name {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    word-break: break-all;
+}
+
+.scan-button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scan-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6);
+    background: linear-gradient(45deg, #00aaff, #0056ff);
+}
+
+.scan-button i {
+    font-size: 1.4em;
+}
+
+.image-preview {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-preview p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+/* Results Section */
+.results-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.results-section h2 {
+    margin-top: 0;
+}
+
+.result-display {
+    margin-bottom: 20px;
+}
+
+.ensemble-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.prediction-text {
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-width: 250px;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.danger-icon {
+    font-size: 1.5em;
+    color: white; /* Icon itself is white, background color changes */
+}
+
+/* State-based UI colors */
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 20; /* Ensure header is on top */
+    position: relative;
+}
+
+.main-title {
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 25px;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 15;
+}
+
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 50px);
+    border: 2px solid var(--accent-blue);
+    position: relative;
+    z-index: 14;
+}
+
+.custom-file-input:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-file-input i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.file-name {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    word-break: break-all;
+}
+
+.scan-button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scan-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6);
+    background: linear-gradient(45deg, #00aaff, #0056ff);
+}
+
+.scan-button i {
+    font-size: 1.4em;
+}
+
+.image-preview {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-preview p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+/* Results Section */
+.results-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.results-section h2 {
+    margin-top: 0;
+}
+
+.result-display {
+    margin-bottom: 20px;
+}
+
+.ensemble-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.prediction-text {
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-width: 250px;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.danger-icon {
+    font-size: 1.5em;
+    color: white; /* Icon itself is white, background color changes */
+}
+
+/* State-based UI colors */
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 20; /* Ensure header is on top */
+    position: relative;
+}
+
+.main-title {
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-section h2 {
+    margin-top: 0;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 25px;
+}
+
+.file-input-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 15;
+}
+
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-blue);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 50px);
+    border: 2px solid var(--accent-blue);
+    position: relative;
+    z-index: 14;
+}
+
+.custom-file-input:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.custom-file-input i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.file-name {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+    word-break: break-all;
+}
+
+.scan-button {
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 114, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scan-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6);
+    background: linear-gradient(45deg, #00aaff, #0056ff);
+}
+
+.scan-button i {
+    font-size: 1.4em;
+}
+
+.image-preview {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 300px;
+    height: 250px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-preview p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+/* Results Section */
+.results-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.results-section h2 {
+    margin-top: 0;
+}
+
+.result-display {
+    margin-bottom: 20px;
+}
+
+.ensemble-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.prediction-text {
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    min-width: 250px;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.danger-icon {
+    font-size: 1.5em;
+    color: white; /* Icon itself is white, background color changes */
+}
+
+/* State-based UI colors */
+body.tumor {
+    background-color: #3b0d1a; /* Darker red background */
+}
+
+body.tumor .card {
+    background-color: #5a1122; /* Dark red for cards */
+    border-color: rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+body.tumor .prediction-text {
+    background-color: var(--red-danger);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--red-danger);
+}
+/* Tech patterns glow red in tumor state */
+body.tumor .tech-pattern {
+    box-shadow: 0 0 30px var(--red-danger), inset 0 0 15px var(--red-danger);
+}
+
+
+body.normal {
+    background-color: #0d3b1a; /* Darker green background */
+}
+
+body.normal .card {
+    background-color: #115a22; /* Dark green for cards */
+    border-color: rgba(105, 179, 105, 0.3);
+    box-shadow: 0 8px 25px rgba(105, 179, 105, 0.4);
+}
+
+body.normal .prediction-text {
+    background-color: var(--green-normal);
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 25px var(--green-normal);
+}
+/* Tech patterns glow green in normal state */
+body.normal .tech-pattern {
+    box-shadow: 0 0 30px var(--green-normal), inset 0 0 15px var(--green-normal);
+}
+
+
+.disagreement-message {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.model-predictions-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.model-predictions-list li {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1em;
+    border-left: 5px solid var(--accent-blue);
+}
+
+.model-predictions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.model-predictions-list span {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.text-red-500 {
+    color: var(--red-danger);
+    font-weight: bold;
+}
+.text-green-500 {
+    color: var(--green-normal);
+    font-weight: bold;
+}
+
+/* History Link Section */
+.history-link-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.history-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(45deg, #8a2be2, #4b0082); /* Purple gradient */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+}
+
+.history-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
+    background: linear-gradient(45deg, #9933ff, #5a1aa0);
+}
+
+.history-button i {
+    font-size: 1.3em;
+}
+
+/* History Page Specific Styles */
+body.history-page {
+    display: block; /* Override flex for history page */
+    padding-bottom: 50px; /* Space for potentially long content */
+}
+
+.history-page header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(to right, var(--accent-blue), #2e4a83);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.history-page .main-title {
+    margin: 0;
+    text-align: left;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--accent-blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.back-button:hover {
+    background-color: var(--button-hover);
+}
+
+.delete-button {
+    background-color: var(--red-danger);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #d13850;
+}
+
+.danger-icon-small {
+    color: var(--red-danger);
+    font-size: 1.1em;
+}
+
+.individual-preds-toggle {
+    margin-top: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.individual-preds-toggle summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.individual-preds-toggle ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.individual-preds-toggle li {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+
+/* Splash Screen */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #16213e, #0f3460, #0a1128);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 1.5s ease-out;
+    pointer-events: none;
+}
+
+#splash-screen.hidden {
+    pointer-events: none;
+}
+
+.neuroscan-logo {
+    font-size: 4em;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: white;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+    display: flex;
+    overflow: hidden; /* Hide overflow for animation */
+}
+
+.neuroscan-logo .animated-text {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInSlideUp 0.8s forwards;
+    display: inline-block; /* Essential for individual character animation */
+}
+
+/* Delay for each character */
+.neuroscan-logo .animated-text:nth-child(1) { animation-delay: 0.1s; }
+.neuroscan-logo .animated-text:nth-child(2) { animation-delay: 0.2s; }
+.neuroscan-logo .animated-text:nth-child(3) { animation-delay: 0.3s; }
+.neuroscan-logo .animated-text:nth-child(4) { animation-delay: 0.4s; }
+.neuroscan-logo .animated-text:nth-child(5) { animation-delay: 0.5s; }
+.neuroscan-logo .animated-text:nth-child(6) { animation-delay: 0.6s; }
+.neuroscan-logo .animated-text:nth-child(7) { animation-delay: 0.7s; }
+.neuroscan-logo .animated-text:nth-child(8) { animation-delay: 0.8s; }
+.neuroscan-logo .animated-text:nth-child(9) { animation-delay: 0.9s; }
+
+@keyframes fadeInSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.scanning-indicator {
+    width: 150px;
+    height: 5px;
+    background-color: rgba(0, 114, 255, 0.5);
+    border-radius: 5px;
+    margin-top: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.scanning-indicator::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 114, 255, 0.8), transparent);
+    animation: scanLine 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes scanLine {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: -100%;
+    }
+}
+
+#main-content {
+    opacity: 0;
+    transition: opacity 1.5s ease-in;
+}
+
+.hidden {
+    display: none;
+}
+
+/* --- New Tech Patterns --- */
+.tech-pattern {
+    position: fixed;
+    top: 0;
+    width: 15%; /* Width of the tech pattern area */
+    height: 100%;
+    background: linear-gradient(to bottom,
+        rgba(0, 150, 255, 0.05),
+        rgba(0, 150, 255, 0.2),
+        rgba(0, 150, 255, 0.05)
+    );
+    z-index: 5; /* Behind main content, above body background */
+    pointer-events: none; /* Allow clicks to pass through */
+    transition: box-shadow 0.5s ease; /* For glow color change */
+}
+
+.tech-pattern.left {
+    left: 0;
+    border-right: 1px solid rgba(var(--tech-glow-color), 0.3);
+    box-shadow: 0 0 30px var(--tech-glow-color), inset 0 0 15px var(--tech-glow-color);
+}
+
+.tech-pattern.right {
+    right: 0;
+    border-left: 1px solid rgba(var(--tech-glow-color), 0.3);
+    box-shadow: 0 0 30px var(--tech-glow-color), inset 0 0 15px var(--tech-glow-color);
+}
+
+/* Subtle animation for tech patterns */
+.tech-pattern::before,
+.tech-pattern::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(var(--tech-glow-color), 0.1);
+    animation: techPulse 4s infinite alternate;
+}
+
+.tech-pattern.left::before {
+    top: 10%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    transform: scaleX(0.8);
+    animation-delay: 0.5s;
+}
+.tech-pattern.left::after {
+    bottom: 15%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    transform: scaleX(0.7);
+    animation-delay: 1.2s;
+}
+.tech-pattern.right::before {
+    top: 25%;
+    right: 0;
+    width: 100%;
+    height: 3px;
+    transform: scaleX(0.9);
+    animation-delay: 0.8s;
+}
+.tech-pattern.right::after {
+    bottom: 5%;
+    right: 0;
+    width: 100%;
+    height: 3px;
+    transform: scaleX(0.6);
+    animation-delay: 1.5s;
+}
+
+@keyframes techPulse {
+    0% {
+        opacity: 0.3;
+        transform: scaleX(0.6);
+    }
+    100% {
+        opacity: 0.8;
+        transform: scaleX(1);
+    }
+}
+
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 900px; /* Adjust for medium screens */
+    }
+    .tech-pattern {
+        width: 10%; /* Reduce width of tech patterns */
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    .main-title {
+        font-size: 2em;
+        letter-spacing: 2px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .custom-file-input, .scan-button, .history-button {
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+
+    .file-input-wrapper {
+        max-width: 100%;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        height: 200px;
+    }
+
+    .prediction-text {
+        font-size: 1.8em;
+        padding: 8px 15px;
+        min-width: unset;
+    }
+
+    .neuroscan-logo {
+        font-size: 2.5em;
+        letter-spacing: 3px;
+    }
+
+    .history-page header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .history-page .main-title {
+        text-align: center;
+    }
+
+    .tech-pattern {
+        width: 5%; /* Even smaller on tablets */
+        box-shadow: 0 0 15px var(--tech-glow-color), inset 0 0 7px var(--tech-glow-color);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .main-title {
+        font-size: 1.8em;
+        letter-spacing: 1.5px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .prediction-text {
+        font-size: 1.5em;
+        gap: 10px;
+    }
+
+    .danger-icon {
+        font-size: 1.2em;
+    }
+
+    .model-predictions-list li {
+        font-size: 0.9em;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .history-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .neuroscan-logo {
+        font-size: 2em;
+        letter-spacing: 2px;
+    }
+
+    /* Hide tech patterns on very small screens to save space */
+    .tech-pattern {
+        display: none;
+    }
+}
+
+/* History Page Styles */
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.history-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 400px;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.history-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.history-image-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.history-image:hover {
+    transform: scale(1.05);
+}
+
+.error-image {
+    object-fit: contain;
+    padding: 20px;
+    opacity: 0.5;
+}
+
+.history-details {
+    flex-grow: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Add placeholder image styling */
+.history-image-container::before {
+    content: 'No Image Available';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-light);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.history-image-container:not(:has(img[src])):before {
+    opacity: 0.5;
+}
